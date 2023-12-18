@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Category;
+use Illuminate\Foundation\Auth\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -19,7 +20,7 @@ class ResourceFactory extends Factory
     {
         return [
             'title' => $this->faker->sentence,
-            'category_id' => Category::new(),
+            'category_id' => Category::factory(),
             'link' => $this->faker->url,
             'description' =>$this->faker->paragraph,
             'creator_id' => User::factory(),

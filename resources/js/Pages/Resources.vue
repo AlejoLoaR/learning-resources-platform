@@ -1,13 +1,18 @@
 <script setup>
 import { Head, Link } from '@inertiajs/vue3';
-import { onMounted, defineProps } from 'vue';
+import { onMounted, defineProps, ref, watch} from 'vue';
 
+let setup = ref("");
 const props = defineProps({
     canLogin: Boolean,
     canRegister: Boolean,
     laravelVersion: String,
     phpVersion: String,
 });
+
+watch(search, (value) => {
+    console.log(value);
+}); 
 
 onMounted(()=> {
     console.log("Recursos cargados", props.resources);
@@ -50,6 +55,7 @@ onMounted(()=> {
             </div>
 
             <div class="relative overflow-x-auto">
+                <input type="text" placeholder="Buscar" v-model="search">
                 <table class="w-full text-sm text-left text-gray-500">
                     <thead class="text-lg text-gray-700 uppercase bg-gray-500">
                         <tr>
