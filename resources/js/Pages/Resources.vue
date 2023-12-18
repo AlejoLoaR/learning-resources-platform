@@ -2,7 +2,7 @@
 import { Head, Link } from '@inertiajs/vue3';
 import { onMounted, defineProps, ref, watch} from 'vue';
 
-let setup = ref("");
+
 const props = defineProps({
     canLogin: Boolean,
     canRegister: Boolean,
@@ -11,11 +11,17 @@ const props = defineProps({
 });
 
 watch(search, (value) => {
-    console.log(value);
+    axios.get("api/resource?search" + value).then((response) => {
+        filteredResources.value = response.data;
+    });
 }); 
 
+let setup = ref("");
+let filteredResources = ref([]);
+
+
 onMounted(()=> {
-    console.log("Recursos cargados", props.resources);
+    filteredResources.value = props.resources;
 });
 
 </script>
@@ -65,7 +71,7 @@ onMounted(()=> {
                         </tr>
                     </thead>
                     <tbody class="bg-white">
-                        <tr v-for="resource in resources" :key="resource.id">
+                        <tr v-for="resource in filteredResources" :key="resource.id">
                             <th scope="row" class="p-4" text-left>{{ resource.title }}</th>
                             <th scope="row" class="p-4">
                                 <a target="_blank" :href="resource.Link">Ver curso</a>
