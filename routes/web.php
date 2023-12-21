@@ -1,13 +1,14 @@
 <?php
 
-use App\Http\Controllers\CategoryController;
 use Inertia\Inertia;
 use App\Models\Category;
 use App\Models\Resource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
+use App\Http\Controllers\VoteController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ResourceController;
 
 /*
@@ -40,5 +41,6 @@ require __DIR__ . '/auth.php';
 
 Route::get('api/resources',[ResourceController::class, 'search']);
 Route::middleware('auth')->post('api/resources',[ResourceController::class, 'store']);
-Route::middleware('auth')->get('api/categories',[CategoryController::class, 'index']);
+Route::get('api/categories',[CategoryController::class, 'index']);
+Route::get('api/vote/{resource}', VoteController::class);
 
