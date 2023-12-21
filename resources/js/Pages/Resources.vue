@@ -1,12 +1,24 @@
 <script setup>
 import { Head, Link } from '@inertiajs/vue3';
+import axios from 'axios';
 import { onMounted, defineProps, ref, watch } from "vue";
 
 const props = defineProps({
-    canLogin: Boolean,
-    canRegister: Boolean,
-    resources: Array,
-    categories: Array,
+    canLogin: {
+        type: Boolean,
+    },
+    canRegister: {
+        type: Boolean,
+    },
+    resources: {
+        type: Array,
+    },
+    categories: {
+        type: Array,
+    },
+    voterId: {
+        type: String,
+    },
 });
 
 let filteredCategory = ref(null);
@@ -34,13 +46,18 @@ onMounted(() => {
 });
 
 function vote(resourceId) {
-    console.log("voted");
-    axios
-        .get("/api/vote" + resourceId)
-        .then((response) => {
-            //filteredResources.value = response.data;
-            console.log(response.data);
+    axios.get("/api/vote/" + resourceId).then((response) => {
+        filteredResources.value = filteredResources.value.map((resource) =>{
+            if (resource.id === resourceId) {
+               return response.data;
+            }
+            return resource;
         });
+        });
+}
+
+function youHaveVoted(resource){
+    return resource.votes.find((vote) => vote.code === props.voterId);
 }
 
 </script>
@@ -98,33 +115,28 @@ function vote(resourceId) {
                     </thead>
                     <tbody class="bg-white">
                         <tr v-for="resource in filteredResources" :key="resource.id">
-                            <th scope="row" class="p-4 text-left">{{ resource.title }}</th>
                             <th scope="row" class="p-4 text-left">
-                                123
-                                <button @click="vote(resource.id)">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                        stroke-width="1.5" stroke="currentColor" data-slot="icon" class="w-6 h-6">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z" />
-                                    </svg>
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                        stroke-width="1.5" stroke="currentColor" data-slot="icon" class="w-6 h-6">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="m3 3 1.664 1.664M21 21l-1.5-1.5m-5.485-1.242L12 17.25 4.5 21V8.742m.164-4.078a2.15 2.15 0 0 1 1.743-1.342 48.507 48.507 0 0 1 11.186 0c1.1.128 1.907 1.077 1.907 2.185V19.5M4.664 4.664 19.5 19.5" />
-                                    </svg>
-                                </button>
-
-
-
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 
-                                        5.111a.563.563 0 0 0 .475.345l5.518.442c.499.
-                                        04.701.663.321.988l-4.204 3.602a.563.563 0 0 
-                                        0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l
-                                        -4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.
-                                        54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562
-                                         0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.
-                                         518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z" />
-
+                                <div class="flex">
+                                    <span>
+                                        {{ resource.votes.length }}
+                                    </span>
+                                    <button @click="vote(resource.id)">
+                                        <svg 
+                                        v-if="youHaveVoted(resource)"
+                                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                            stroke-width="1.5" stroke="currentColor" data-slot="icon" class="w-6 h-6">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z" />
+                                        </svg>
+                                        <svg
+                                            v-else 
+                                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                            stroke-width="1.5" stroke="currentColor" data-slot="icon" class="w-6 h-6">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="m3 3 1.664 1.664M21 21l-1.5-1.5m-5.485-1.242L12 17.25 4.5 21V8.742m.164-4.078a2.15 2.15 0 0 1 1.743-1.342 48.507 48.507 0 0 1 11.186 0c1.1.128 1.907 1.077 1.907 2.185V19.5M4.664 4.664 19.5 19.5" />
+                                        </svg>
+                                    </button>
+                                </div>
                             </th>
                             <th scope="row" class="p-4 text-left">{{ resource.title }}</th>
                             <th scope="row" class="p-4">
